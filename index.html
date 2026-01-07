@@ -2,256 +2,143 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>晚餐拉霸機-行動版</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今晚吃什麼？晚餐拉霸機</title>
     <style>
-        :root {
-            --machine-color: #f39c12;
-            --machine-border: #d35400;
-            --handle-color: #95a5a6;
-            --knob-color: #e74c3c;
-            --window-bg: #ffffff;
-        }
-
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
         body {
-            background-color: #2c3e50;
-            margin: 0;
+            font-family: 'Microsoft JhengHei', sans-serif;
+            background-color: #f7f7f7;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: "Microsoft JhengHei", sans-serif;
-            overflow: hidden;
-        }
-
-        /* 標題 */
-        .title {
-            color: #f1c40f;
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        /* 主容器：讓拉桿跟機器緊貼 */
-        .game-area {
-            display: flex;
-            align-items: center;
-            width: 95%;
-            max-width: 400px; /* 手機寬度限制 */
-            justify-content: center;
-        }
-
-        /* 拉霸機主體 */
-        .slot-machine {
-            flex: 1;
-            background: var(--machine-color);
-            border: 6px solid var(--machine-border);
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 10px 0 #a04000, 0 20px 30px rgba(0,0,0,0.5);
-            position: relative;
-            z-index: 2;
-        }
-
-        /* 顯示窗口 */
-        .window {
-            height: 100px;
-            background: var(--window-bg);
-            border: 5px solid #333;
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        /* 滾輪 */
-        .reel {
-            list-style: none;
-            padding: 0;
             margin: 0;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            transition: top 0s;
         }
 
-        .item {
-            height: 100px;
-            line-height: 90px; /* 稍微修正垂直置中 */
+        .container {
             text-align: center;
-            font-size: 2.2rem;
-            font-weight: bold;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
             color: #333;
-            white-space: nowrap;
+            margin-bottom: 20px;
         }
 
-        /* 拉桿區域 */
-        .lever-container {
-            width: 50px;
-            height: 200px;
-            position: relative;
-            display: flex;
-            justify-content: flex-start;
-            cursor: pointer;
-        }
-
-        /* 拉桿基座 */
-        .lever-base {
-            width: 15px;
-            height: 60px;
-            background: #7f8c8d;
-            margin-top: 70px;
-            border-radius: 0 5px 5px 0;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-        }
-
-        /* 拉桿桿身 */
-        .lever-rod {
-            width: 10px;
+        .slot-machine {
+            background: #333;
+            color: #ffcc00;
+            font-size: 3rem;
+            font-weight: bold;
             height: 120px;
-            background: var(--handle-color);
-            position: absolute;
-            left: 10px;
-            bottom: 70px;
-            border-radius: 5px;
-            transform-origin: bottom center;
-            transition: transform 0.3s ease-out;
-            z-index: 1;
+            line-height: 120px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 5px solid #555;
+            overflow: hidden;
+            position: relative;
         }
 
-        /* 拉桿球球 */
-        .lever-knob {
-            width: 44px;
-            height: 44px;
-            background: var(--knob-color);
-            border-radius: 50%;
-            position: absolute;
-            top: -35px;
-            left: -17px;
-            box-shadow: inset -4px -4px 8px rgba(0,0,0,0.4), 2px 2px 5px rgba(0,0,0,0.3);
+        .option-display {
+            transition: transform 0.1s;
         }
 
-        /* 動畫效果：拉下拉桿 */
-        .lever-rod.pulled {
-            transform: rotateX(60deg) scaleY(0.5);
+        button {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 0 #cf3544;
         }
 
-        /* 中獎跳動 */
-        @keyframes win-glow {
-            0% { transform: scale(1); color: #333; }
-            50% { transform: scale(1.1); color: #e67e22; }
-            100% { transform: scale(1); color: #333; }
-        }
-        .winner {
-            animation: win-glow 0.5s ease infinite;
+        button:hover {
+            background-color: #ff6b81;
         }
 
-        .hint {
-            color: #bdc3c7;
-            margin-top: 30px;
+        button:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .history {
+            margin-top: 20px;
+            color: #777;
             font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
-    <div class="title">今晚吃什麼？</div>
-
-    <div class="game-area">
-        <!-- 機器 -->
-        <div class="slot-machine">
-            <div class="window">
-                <ul class="reel" id="reel">
-                    <li class="item">拉拉桿 👇</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- 拉桿 -->
-        <div class="lever-container" onclick="handlePull()">
-            <div class="lever-base"></div>
-            <div class="lever-rod" id="rod">
-                <div class="lever-knob"></div>
-            </div>
-        </div>
+<div class="container">
+    <h1>今晚吃什麼？</h1>
+    
+    <div class="slot-machine">
+        <div id="display">請按開始</div>
     </div>
 
-    <div class="hint">點擊紅色拉桿開始</div>
+    <button id="spinBtn" onclick="startSpin()">開始抽獎</button>
+
+    <div class="history" id="history"></div>
+</div>
 
 <script>
     const options = ["牛肉麵", "排骨飯", "牛排", "咖哩飯", "義大利麵", "拉麵", "麥當勞", "臭豆腐", "炒飯"];
-    const reel = document.getElementById('reel');
-    const rod = document.getElementById('rod');
+    const display = document.getElementById('display');
+    const btn = document.getElementById('spinBtn');
     let isSpinning = false;
 
-    function handlePull() {
+    function startSpin() {
         if (isSpinning) return;
 
-        // 觸發拉桿動作
         isSpinning = true;
-        rod.classList.add('pulled');
+        btn.disabled = true;
+        let counter = 0;
+        const totalSpins = 30; // 滾動次數
+        const speed = 80;     // 滾動速度 (毫秒)
 
-        // 手機震動反饋 (若支援)
-        if (navigator.vibrate) navigator.vibrate(50);
+        // 啟動滾動動畫
+        const timer = setInterval(() => {
+            const randomIndex = Math.floor(Math.random() * options.length);
+            display.innerText = options[randomIndex];
+            display.style.color = '#ffcc00';
+            counter++;
 
-        // 隨機決定結果
-        const finalChoice = options[Math.floor(Math.random() * options.length)];
-
-        // 延遲一下回彈並開始滾動
-        setTimeout(() => {
-            rod.classList.remove('pulled');
-            startSpin(finalChoice);
-        }, 300);
+            if (counter >= totalSpins) {
+                clearInterval(timer);
+                finalizeSelection();
+            }
+        }, speed);
     }
 
-    function startSpin(finalChoice) {
-        const itemHeight = 100; // 必須與 CSS item height 一致
-        const spinCount = 25;   // 滾動次數
+    function finalizeSelection() {
+        const finalIndex = Math.floor(Math.random() * options.length);
+        const result = options[finalIndex];
         
-        // 建立滾輪清單
-        reel.innerHTML = '';
-        let tempOptions = [];
-        for (let i = 0; i < spinCount; i++) {
-            tempOptions.push(options[Math.floor(Math.random() * options.length)]);
+        display.innerText = result;
+        display.style.color = '#2ed573'; // 中獎顏色
+        
+        btn.disabled = false;
+        isSpinning = false;
+
+        // 震動效果 (手機支援的話)
+        if (navigator.vibrate) {
+            navigator.vibrate(100);
         }
-        tempOptions.push(finalChoice);
-
-        tempOptions.forEach(text => {
-            const li = document.createElement('li');
-            li.className = 'item';
-            li.innerText = text;
-            reel.appendChild(li);
-        });
-
-        // 動畫設定
-        const totalDistance = (tempOptions.length - 1) * itemHeight;
-        reel.style.transition = 'none';
-        reel.style.top = '0px';
-
-        // 強制重繪
-        reel.offsetHeight;
-
-        // 開始滾動
-        const duration = 2.5; // 秒
-        reel.style.transition = `top ${duration}s cubic-bezier(0.15, 0, 0.15, 1)`;
-        reel.style.top = `-${totalDistance}px`;
-
-        // 結束
-        setTimeout(() => {
-            isSpinning = false;
-            const lastItem = reel.lastElementChild;
-            lastItem.classList.add('winner');
-            
-            // 震動通知結束
-            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-        }, duration * 1000);
     }
 </script>
 
