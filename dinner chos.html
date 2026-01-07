@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>豪華型晚餐拉霸機</title>
+    <style>
+        :root {
+            --machine-color: #e67e22;
+            --handle-color: #7f8c8d;
+            --knob-color: #c0392b;
+        }
+
+        body {
+            background-color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: "Microsoft JhengHei", sans-serif;
+        }
+
+        /* 整體容器，包含機器與拉桿 */
+        .slot-container {
+            display: flex;
+            align-items: center;
+        }
+
+        /* 拉霸機主體 */
+        .machine-body {
+            width: 450px;
+            height: 350px;
+            background: var(--machine-color);
+            border: 10px solid #d35400;
+            border-radius: 20px;
+            box-shadow: 0 20px 0 #a04000, 0 30px 50px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .title {
+            color: white;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 0 #d35400;
+            margin-bottom: 20px;
+        }
+
+        /* 顯示窗口 */
+        .slot-window {
+            width: 350px;
+            height: 120px;
+            background: #fff;
+            border: 8px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 滾動內容 */
+        .slot-reel {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+            position: absolute;
+            width: 100%;
+            top: 0;
+        }
+
+        .slot-item {
+            height: 120px;
+            line-height: 120px;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* 拉桿組件 */
+        .handle-box {
+            width: 60px;
+            height: 250px;
+            position: relative;
+            cursor: pointer;
+            margin-left: -5px; /* 與主體連接 */
+        }
+
+        /* 拉桿基座 */
+        .handle-base {
+            width: 20px;
+            height: 80px;
+            background: #95a5a6;
+            position: absolute;
+            top: 100px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* 拉桿長條 */
+        .handle-rod {
+            width: 12px;
+            height: 150px;
+            background: var(--handle-color);
+            position: absolute;
+            left: 20px;
+            top: -20px;
+            border-radius: 5px;
+            transform-origin: bottom center;
+            transition: transform 0.2s ease-in;
+            z-index: 1;
+        }
+
+        /* 拉桿球球 */
+        .handle-knob {
+            width: 50px;
+            height: 50px;
+            background: var(--knob-color);
+            border-radius: 50%;
+            position: absolute;
+            top: -40px;
+            left: -19px;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.3);
+        }
+
+        /* 拉下時的動畫類別 */
+        .pull-animation {
+            transform: rotateX(70deg) translateY(50px);
+        }
+
+        /* 慶祝效果 */
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .winner {
+            animation: bounce 0.5s infinite;
+            color: #e74c3c !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="slot-container">
+    <!-- 主機部 -->
+    <div class="machine-body">
+        <div class="title">晚餐吃什麼？</div>
+        <div class="slot-window">
+            <ul class="slot-reel" id="reel">
+                <li class="slot-item">準備...</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 拉桿部 -->
+    <div class="handle-box" onclick="pullLever()">
+        <div class="handle-base"></div>
+        <div class="handle-rod" id="rod">
+            <div class="handle-knob"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const options = ["牛肉麵", "排骨飯", "牛排", "咖哩飯", "義大利麵", "拉麵", "麥當勞", "臭豆腐", "炒飯"];
+    const reel = document.getElementById('reel');
+    const rod = document.getElementById('rod');
+    let isSpinning = false;
+
+    function pullLever() {
+        if (isSpinning) return;
+
+        isSpinning = true;
+
+        // 1. 播放拉桿動畫
+        rod.classList.add('pull-animation');
+        
+        // 2. 隨機決定結果
+        const finalChoice = options[Math.floor(Math.random() * options.length)];
+        
+        // 3. 延遲一下開始滾動 (讓拉桿動作完成)
+        setTimeout(() => {
+            rod.classList.remove('pull-animation');
+            startSpinning(finalChoice);
+        }, 300);
+    }
+
+    function startSpinning(finalChoice) {
+        // 清空滾輪並填入隨機假資料增加滾動感
+        reel.innerHTML = '';
+        const spinCount = 20; // 滾動次數
+        
+        // 建立隨機列表
+        let tempItems = [];
+        for (let i = 0; i < spinCount; i++) {
+            tempItems.push(options[Math.floor(Math.random() * options.length)]);
+        }
+        tempItems.push(finalChoice); // 最後一個是真正的結果
+
+        // 將項目加入 HTML
+        tempItems.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'slot-item';
+            li.innerText = item;
+            reel.appendChild(li);
+        });
+
+        // 動畫邏輯：使用 CSS Transition 達成平滑滾動
+        const itemHeight = 120;
+        const totalDistance = (tempItems.length - 1) * itemHeight;
+
+        reel.style.transition = 'none';
+        reel.style.top = '0px';
+
+        // 強制重繪
+        reel.offsetHeight;
+
+        // 開始快速滑動
+        reel.style.transition = `top ${spinCount * 0.1}s cubic-bezier(0.45, 0.05, 0.55, 0.95)`;
+        reel.style.top = `-${totalDistance}px`;
+
+        // 結束後處理
+        setTimeout(() => {
+            isSpinning = false;
+            // 標示中獎文字
+            const lastItem = reel.lastElementChild;
+            lastItem.classList.add('winner');
+            
+            // 讓使用者知道可以再抽一次
+            console.log("今晚就決定吃：" + finalChoice);
+        }, spinCount * 100);
+    }
+</script>
+
+</body>
+</html>
